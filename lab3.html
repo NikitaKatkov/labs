@@ -1,0 +1,92 @@
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2016 by anonymous (http://jsbin.com/danazenaci/1/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+<HTML>
+<BODY>
+<p>lab3</p>
+<canvas id='lab3' width='950' height='950'>
+<script>
+var canvas = document.getElementById('lab3');	
+var ctx = canvas.getContext('2d');
+var Point = function(x, y) 
+{
+	this.x = x;
+	this.y = y;
+}
+//Прямая (алг. Брезехема)
+function drawLine(x0, y0, x1, y1){
+	function sign(x) {
+		return (x > 0) ? 1 : (x < 0) ? -1 : 0;
+	}
+	var x, y, dx, dy, incx, incy, pdx, pdy, es, el, error;
+	dx = x1 - x0; 
+	dy = y1 - y0; 	
+	incx = sign(dx);
+	incy = sign(dy);
+	if (dx < 0) dx = Math.abs(dx);
+	if (dy < 0) dy = Math.abs(dy);
+	if(dx > dy) {
+		pdx = incx; 
+		pdy = 0;
+		es = dy; 
+		el = dx;	
+	}else {
+		pdx = 0;	
+		pdy = incy;
+		es = dx;
+		el = dy; 
+	}
+	x = x0;
+	y = y0;
+	error = el / 2;
+	ctx.fillRect(x, y, 1, 1);
+	for (t = 0; t < el; t++) {
+		error -= es;
+		if (error < 0){
+			error += el;
+			x += incx; 
+			y += incy;
+		}else{
+            x += pdx; 
+			y += pdy; 
+		}
+		ctx.fillRect(x, y, 1, 1);
+	}
+}
+
+//Кривая Безье:
+function Bese(x1, y1, x2, y2, x3, y3) {
+    var xMid1 = Math.ceil((x1+x2)/2);
+    var yMid1 = Math.ceil((y1+y2)/2);
+    var xMid2 = Math.ceil((x2+x3)/2);
+    var yMid2 = Math.ceil((y2+y3)/2);
+    var xCenter = Math.ceil((xMid1+xMid2)/2);
+    var yCenter = Math.ceil((yMid1+yMid2)/2);
+    ctx.fillRect(xCenter, yCenter, 1, 1);
+
+    if (Math.abs(xMid1 - xCenter) <= 1 && Math.abs(yMid1 -yCenter) <= 1) {
+      drawLine(xMid1, yMid1, xCenter, yCenter);
+      drawLine(xMid2, yMid2, xCenter, yCenter);
+    } else {
+      Bese(x1, y1, xMid1, yMid1, xCenter, yCenter);
+      Bese(xCenter, yCenter, xMid2, yMid2, x3, y3);
+    }
+}
+function getLen(x1, y1, x2, y2) {
+    var result = Math.sqrt(Math.pow((x1-x2),2) + Math.pow((y1-y2),2));
+    return Math.ceil(result);
+}
+
+  
+//построение по трем точкам
+Bese(50,50, 100,600, 500,100);
+</script>
+</canvas>
+</BODY>
+</HTML>
